@@ -130,7 +130,6 @@ import isUndefined from 'lodash/isUndefined';
 import { clearKeymapTemplate } from '@/common.js';
 import { PREVIEW_LABEL } from '@/store/modules/constants';
 import {
-  load_converted_keymap,
   disableCompileButton,
   disableOtherButtons,
   getPreferredLayout,
@@ -215,6 +214,7 @@ export default {
       'loadLayouts'
     ]),
     ...mapActions('status', ['viewReadme']),
+    ...mapActions('keymap', ['load_converted_keymap']),
     importUrlkeymap: function() {
       this.loadKeymapFromUrl(this.urlImport)
         .then(data => {
@@ -381,8 +381,8 @@ export default {
         let promise = new Promise(resolve =>
           this.setLoadingKeymapPromise(resolve)
         );
-        promise.then(() => {
-          const stats = load_converted_keymap(data.layers);
+        promise.then(async () => {
+          const stats = await this.load_converted_keymap(data.layers);
           const msg = this.$t('statsTemplate', stats);
           this.deferredMessage(msg);
           this.viewReadme(this.keyboard).then(() => {
